@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Overview · BrandGuard AI{% endblock %}
+{% block content %}
+<section class="hero p-4 p-lg-5 mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-8">
+      <span class="eyebrow">PRE-PUBLICATION GOVERNANCE</span>
+      <h1 class="display-5 fw-bold mt-2">Keep every message<br><span class="gradient-text on-dark">on-brand and explainable.</span></h1>
+      <p class="lead text-white-50 mt-3">Check drafts against your brand rules, understand why issues were flagged, and keep approval in human hands.</p>
+      <a class="btn btn-light btn-lg mt-2" href="{{ url_for('new_review') }}">Start a content review <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="col-lg-4"><div class="hero-orbit"><div class="orbit-inner">BG<br><small>REVIEW ENGINE</small></div><span class="orbit-dot dot-one">✓</span><span class="orbit-dot dot-two">≋</span><span class="orbit-dot dot-three">◎</span></div></div>
+  </div>
+</section>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card"><span>Total reviews</span><strong>{{ total }}</strong><small>All submitted drafts</small></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><span>Needs attention</span><strong>{{ pending }}</strong><small>Not yet approved</small></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><span>Approved</span><strong>{{ approved }}</strong><small>Human decision recorded</small></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><span>Active rules</span><strong>{{ rules_count }}</strong><small>Used by the checker</small></div></div>
+</div>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="panel h-100">
+      <div class="d-flex justify-content-between align-items-center mb-3"><div><span class="eyebrow">RECENT ACTIVITY</span><h2 class="h4 mt-1 mb-0">Recent reviews</h2></div><a href="{{ url_for('history') }}" class="text-link">View all →</a></div>
+      {% if recent %}
+        {% for item in recent %}
+        <a class="review-row" href="{{ url_for('review_detail', review_id=item.id) }}">
+          <div class="review-icon">▤</div><div class="flex-grow-1"><strong>{{ item.title }}</strong><small>{{ item.updated_at }}</small></div><span class="status status-{{ item.status|lower|replace(' ', '-') }}">{{ item.status }}</span>
+        </a>
+        {% endfor %}
+      {% else %}<div class="empty-state"><div class="empty-icon">✦</div><strong>Your review queue starts here</strong><p>Submit a sample draft to see findings and review decisions.</p><a href="{{ url_for('new_review') }}" class="btn btn-brand">Review your first draft</a></div>{% endif %}
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="panel h-100">
+      <span class="eyebrow">HOW IT WORKS</span><h2 class="h4 mt-1 mb-4">A transparent review loop</h2>
+      <div class="step"><span>01</span><div><strong>Set the rules</strong><p>Add approved terms, restricted phrases and guidance.</p></div></div>
+      <div class="step"><span>02</span><div><strong>Check the draft</strong><p>Rule matches and claim heuristics explain what needs attention.</p></div></div>
+      <div class="step"><span>03</span><div><strong>Decide as a human</strong><p>Revise, request changes, approve or reject with a comment.</p></div></div>
+      <a href="{{ url_for('rules') }}" class="btn btn-outline-brand w-100 mt-2">Manage brand rules</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

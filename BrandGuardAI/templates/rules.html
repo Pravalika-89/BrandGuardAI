@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Brand rules · BrandGuard AI{% endblock %}
+{% block content %}
+<div class="page-heading"><span class="eyebrow">KNOWLEDGE BASE</span><h1 class="h2 mt-2">Brand rules</h1><p>Create the rules that the checker uses. Exact-term rules are deterministic and can be switched on or off.</p></div>
+<div class="row g-4">
+  <div class="col-lg-5"><section class="panel">
+    <h2 class="h5 mb-3">Add a rule</h2>
+    <form method="post">
+      <label class="form-label" for="category">Category</label>
+      <select class="form-select mb-3" id="category" name="category" required>
+        <option>Terminology</option><option>Restricted wording</option><option>Tone</option><option>Claims</option><option>Messaging</option><option>Accessibility</option><option>Visual consistency</option>
+      </select>
+      <label class="form-label" for="rule_text">Rule description</label>
+      <textarea class="form-control mb-3" id="rule_text" name="rule_text" rows="3" required placeholder="Explain the approved guideline..."></textarea>
+      <label class="form-label" for="term">Exact term to detect <span class="text-muted">(optional)</span></label>
+      <input class="form-control mb-3" id="term" name="term" placeholder="e.g. user">
+      <label class="form-label" for="replacement">Suggested replacement <span class="text-muted">(optional)</span></label>
+      <input class="form-control mb-3" id="replacement" name="replacement" placeholder="e.g. customer">
+      <div class="hint-box mb-3">Tip: when a term is detected, BrandGuard shows this rule as evidence. Replacement suggestions are optional and never auto-published.</div>
+      <button class="btn btn-brand w-100" type="submit">＋ Save brand rule</button>
+    </form>
+  </section></div>
+  <div class="col-lg-7"><section class="panel">
+    <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h5 mb-0">Configured rules</h2><span class="soft-badge">{{ rules|length }} total</span></div>
+    {% for rule in rules %}
+    <div class="rule-card {{ 'rule-inactive' if not rule.active }}">
+      <div class="d-flex justify-content-between gap-3 align-items-start"><div><span class="category-tag">{{ rule.category }}</span><h3 class="h6 mt-2">{{ rule.rule_text }}</h3>
+        {% if rule.term %}<p class="mb-1 small text-muted">Detect: <code>{{ rule.term }}</code>{% if rule.replacement %} → <code>{{ rule.replacement }}</code>{% endif %}</p>{% endif %}
+        <small class="text-muted">Rule #{{ rule.id }} · {{ 'Active' if rule.active else 'Inactive' }}</small></div>
+        <form method="post" action="{{ url_for('toggle_rule', rule_id=rule.id) }}"><button class="btn btn-sm {{ 'btn-outline-secondary' if rule.active else 'btn-outline-success' }}" type="submit">{{ 'Disable' if rule.active else 'Enable' }}</button></form>
+      </div>
+    </div>
+    {% else %}<p class="text-muted">No rules yet.</p>{% endfor %}
+  </section></div>
+</div>
+{% endblock %}

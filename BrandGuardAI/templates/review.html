@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Review content · BrandGuard AI{% endblock %}
+{% block content %}
+<div class="page-heading"><span class="eyebrow">CONTENT REVIEW</span><h1 class="h2 mt-2">Check a draft before it goes live.</h1><p>Paste customer-facing copy. BrandGuard will compare it with active rules and flag claims that may need approved evidence.</p></div>
+<div class="row g-4">
+  <div class="col-lg-8"><section class="panel">
+    <form method="post" id="reviewForm">
+      <label class="form-label" for="title">Review title</label><input class="form-control mb-3" id="title" name="title" value="{{ title }}" placeholder="e.g. New product launch post">
+      <div class="d-flex justify-content-between"><label class="form-label" for="content">Draft content</label><span id="wordCount" class="small text-muted">0 words</span></div>
+      <textarea class="form-control content-editor" id="content" name="content" rows="10" required placeholder="Paste your campaign, product description, email or social post here...">{{ content }}</textarea>
+      <div class="d-flex flex-wrap gap-2 mt-3"><button class="btn btn-brand btn-lg" type="submit">✦ Check brand compliance</button><button class="btn btn-outline-secondary" type="button" id="sampleBtn">Load sample draft</button></div>
+    </form>
+  </section></div>
+  <div class="col-lg-4"><aside class="panel">
+    <span class="eyebrow">WHAT GETS CHECKED</span>
+    <div class="mini-feature"><span class="mini-icon">Aa</span><div><strong>Terminology</strong><p>Preferred terms and restricted wording.</p></div></div>
+    <div class="mini-feature"><span class="mini-icon">✓</span><div><strong>Claims</strong><p>Quantitative or absolute claims that may need evidence.</p></div></div>
+    <div class="mini-feature"><span class="mini-icon">≋</span><div><strong>Clarity</strong><p>Basic readability prompts for longer content.</p></div></div>
+    <div class="hint-box mt-3">A flag is a review prompt, not a verdict. “Unverified” means no supporting approved source was available to this prototype.</div>
+  </aside></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const content = document.getElementById('content');
+const wordCount = document.getElementById('wordCount');
+function updateWords(){ const n = content.value.trim() ? content.value.trim().split(/\s+/).length : 0; wordCount.textContent = `${n} words`; }
+content.addEventListener('input', updateWords); updateWords();
+document.getElementById('sampleBtn').addEventListener('click', () => {
+ document.getElementById('title').value = 'Spring product launch post';
+ content.value = 'Our users love the fastest platform in the world. Get 100% guaranteed results in just 2 days. Sign up today!';
+ updateWords();
+});
+</script>
+{% endblock %}

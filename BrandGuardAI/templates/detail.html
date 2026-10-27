@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Review #{{ review.id }} · BrandGuard AI{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+  <div><span class="eyebrow">REVIEW #{{ review.id }}</span><h1 class="h2 mt-2">{{ review.title }}</h1><p class="text-muted mb-0">Created {{ review.created_at }} · Updated {{ review.updated_at }}</p></div>
+  <span class="status status-{{ review.status|lower|replace(' ', '-') }} status-large">{{ review.status }}</span>
+</div>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <section class="panel mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h5 mb-0">Findings</h2><span class="soft-badge">{{ findings|length }} flagged item(s)</span></div>
+      {% if findings %}
+        {% for item in findings %}
+        <article class="finding-card">
+          <div class="d-flex justify-content-between gap-2"><span class="category-tag">{{ item.category }}</span><span class="severity">{{ item.severity }}</span></div>
+          <h3 class="h6 mt-3">Matched: <code>{{ item.matched }}</code></h3>
+          <p class="mb-2">{{ item.rule }}</p>
+          <div class="evidence-box"><strong>Evidence</strong><p class="mb-1">{{ item.evidence }}</p><small>{{ item.evidence_status }}</small></div>
+          <p class="mt-3 mb-0"><strong>Suggested action:</strong> {{ item.suggestion }}</p>
+        </article>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state"><div class="empty-icon">✓</div><strong>No active rule matches found</strong><p>This does not guarantee the draft is factually correct. A human reviewer should still verify it before publication.</p></div>
+      {% endif %}
+    </section>
+    <section class="panel">
+      <h2 class="h5 mb-3">Original draft</h2><div class="draft-box">{{ review.content }}</div>
+    </section>
+  </div>
+  <div class="col-lg-5">
+    <section class="panel sticky-panel">
+      <span class="eyebrow">HUMAN DECISION</span><h2 class="h5 mt-2">Review and decide</h2>
+      <p class="small text-muted">Edit the draft below. The reviewer makes the final decision; nothing is published automatically.</p>
+      <form method="post" action="{{ url_for('recheck', review_id=review.id) }}" class="mb-3">
+        <label class="form-label" for="revised_content">Revised content</label>
+        <textarea class="form-control" id="revised_content" name="revised_content" rows="7">{{ review.revised_content or review.content }}</textarea>
+        <button class="btn btn-outline-brand w-100 mt-2" type="submit">↻ Save and run checks again</button>
+      </form>
+      <form method="post">
+        <input type="hidden" name="revised_content" id="decision_content">
+        <label class="form-label" for="reviewer_comment">Reviewer comment</label>
+        <textarea class="form-control mb-3" id="reviewer_comment" name="reviewer_comment" rows="2" placeholder="Why are you approving or requesting changes?">{{ review.reviewer_comment }}</textarea>
+        <div class="d-grid gap-2">
+          <button class="btn btn-success" name="action" value="approve" type="submit" onclick="document.getElementById('decision_content').value=document.getElementById('revised_content').value">✓ Approve</button>
+          <button class="btn btn-outline-warning" name="action" value="request_changes" type="submit" onclick="document.getElementById('decision_content').value=document.getElementById('revised_content').value">Request changes</button>
+          <button class="btn btn-outline-danger" name="action" value="reject" type="submit" onclick="document.getElementById('decision_content').value=document.getElementById('revised_content').value">Reject</button>
+          <button class="btn btn-light border" name="action" value="save_revision" type="submit" onclick="document.getElementById('decision_content').value=document.getElementById('revised_content').value">Save revision only</button>
+        </div>
+      </form>
+      {% if review.reviewer_comment %}<div class="hint-box mt-3"><strong>Last reviewer comment</strong><p class="mb-0 mt-1">{{ review.reviewer_comment }}</p></div>{% endif %}
+    </section>
+  </div>
+</div>
+{% endblock %}

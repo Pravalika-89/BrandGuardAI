@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Review history · BrandGuard AI{% endblock %}
+{% block content %}
+<div class="page-heading"><span class="eyebrow">AUDIT TRAIL</span><h1 class="h2 mt-2">Review history</h1><p>Submitted drafts and the latest human decision are stored locally in SQLite.</p></div>
+<section class="panel">
+  {% if reviews %}
+  <div class="table-responsive"><table class="table align-middle">
+    <thead><tr><th>Content</th><th>Created</th><th>Status</th><th></th></tr></thead><tbody>
+    {% for review in reviews %}<tr><td><strong>{{ review.title }}</strong><div class="small text-muted text-truncate history-snippet">{{ review.content }}</div></td><td class="text-nowrap">{{ review.created_at }}</td><td><span class="status status-{{ review.status|lower|replace(' ', '-') }}">{{ review.status }}</span></td><td><a class="btn btn-sm btn-outline-brand" href="{{ url_for('review_detail', review_id=review.id) }}">Open</a></td></tr>{% endfor %}
+    </tbody></table></div>
+  {% else %}<div class="empty-state"><div class="empty-icon">▤</div><strong>No reviews saved yet</strong><p>Run your first content check to create a review record.</p><a href="{{ url_for('new_review') }}" class="btn btn-brand">Start a review</a></div>{% endif %}
+</section>
+{% endblock %}
